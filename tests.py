@@ -8,10 +8,25 @@ class TestBooksCollector:
         assert 'Загадочная история Бенджамина Баттона' in collector.books_genre
         assert collector.books_genre['Загадочная история Бенджамина Баттона'] == ''
 
+    def test_add_duplicate_book(self, collector):
+        book_name = '1984'
+        collector.add_new_book(book_name)
+        collector.add_new_book(book_name)
+        all_books = collector.get_books_genre()
+        count_books = list(all_books.keys()).count(book_name)
+        assert count_books == 1
+
     def test_set_book_genre(self, collector):
         collector.add_new_book('Солярис')
         collector.set_book_genre('Солярис', 'Фантастика')
         assert collector.books_genre['Солярис'] == 'Фантастика'
+
+    def test_add_new_book_len_more_40(self):
+        collector = BooksCollector()
+        long_name = 'n' * 41
+        collector.add_new_book(long_name)
+        all_books = collector.get_books_genre()
+        assert long_name not in all_books
 
     def test_set_genre_for_nonexistent_book(self, collector):
         collector.set_book_genre('Несуществующая книга', 'Фантастика')
@@ -96,6 +111,11 @@ class TestBooksCollector:
         favorites = collector.get_list_of_favorites_books()
 
         assert book_name in favorites
+
+    def test_add_book_in_favorites_not_added_book(self, books_collector):
+        books_collector.add_book_in_favorites('Обломов и Онегин')
+        list_books = books_collector.get_list_of_favorites_books()
+        assert len(list_books) == 0
 
 
     def test_get_list_of_favorites_books_have_books(self, collector):
